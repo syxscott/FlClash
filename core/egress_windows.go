@@ -12,11 +12,6 @@ func init() {
 	detectEgress = detectWindowsEgress
 }
 
-// The interface a fresh connection would leave through, computed the way
-// sing-tun's own monitor picks the auto-detect answer: the lowest metric
-// default route on an up, connected, non-virtual interface. The monitors are
-// built and torn down for this one read; the TUN listener owns the long-lived
-// pair once it starts.
 func detectWindowsEgress() string {
 	network, err := tun.NewNetworkUpdateMonitor(log.SingLogger)
 	if err != nil {
