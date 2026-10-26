@@ -209,7 +209,9 @@ anyway, and `finishEgress` releases the pin once the finder is installed and eve
 The pin is skipped where it must not change behaviour: `interface-name` is already set, the TUN or `auto-route` or
 `auto-detect-interface` is off, or the finder is already installed, which is every apply after the first one. Only the
 copy handed to that one apply carries the pin, the stored config keeps the interface the profile asked for, and the
-release is a `CompareAndSwap`, so an `interface-name` written by `updateConfig` meanwhile survives.
+release is a `CompareAndSwap` back to the empty interface the app manages, so an interface a later apply wrote
+survives. The release restores the empty interface rather than a configured one because the pin is only ever taken
+when the interface was empty, and `dialer.DefaultInterface` takes precedence over the finder.
 
 The interface is detected on Windows only, in `core/egress_windows.go`, with the monitors sing-tun's own default
 interface monitor uses; elsewhere the detector answers `""` and nothing is pinned. The change is on the FlClash side

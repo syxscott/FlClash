@@ -57,7 +57,7 @@ func handleStopListener() bool {
 	defer configMu.Unlock()
 	isRunning.Store(false)
 	listener.StopListener()
-	finishEgress(currentConfig)
+	finishEgress()
 	resolver.ResetConnection()
 	return true
 }
@@ -86,7 +86,7 @@ func updateListeners(cfg *config.Config) {
 	if !features.Android {
 		listener.ReCreateTun(general.Tun, tunnel.Tunnel)
 	}
-	finishEgress(cfg)
+	finishEgress()
 }
 
 func handleShutdown() bool {
@@ -96,7 +96,7 @@ func handleShutdown() bool {
 	configMu.Lock()
 	isRunning.Store(false)
 	listener.StopListener()
-	finishEgress(currentConfig)
+	finishEgress()
 	updater.StopGeoUpdater()
 	executor.Shutdown()
 	currentConfig = nil

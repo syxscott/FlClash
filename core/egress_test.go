@@ -62,7 +62,9 @@ func TestEgressBootstrapPinsTheFirstApplyToTheDefaultInterface(t *testing.T) {
 		t.Fatalf("egressInterface = %q, want WLAN", egressInterface)
 	}
 
-	finishEgress(prepared)
+	// The applied config is what executor stores as the default interface.
+	dialer.DefaultInterface.Store(prepared.General.Interface)
+	finishEgress()
 	if loaded := dialer.DefaultInterface.Load(); loaded != "" {
 		t.Fatalf("DefaultInterface after finish = %q, want empty", loaded)
 	}
@@ -128,10 +130,10 @@ func TestEgressFinishLeavesALaterInterfaceAlone(t *testing.T) {
 	prepareEgress(cfg)
 	dialer.DefaultInterface.Store("Ethernet")
 
-	finishEgress(cfg)
+	finishEgress()
 
 	if loaded := dialer.DefaultInterface.Load(); loaded != "Ethernet" {
-		t.Fatalf("DefaultInterface after finish = %q, want the updateConfig value kept", loaded)
+		t.Fatalf("DefaultInterface after finish = %q, want the later value kept", loaded)
 	}
 }
 

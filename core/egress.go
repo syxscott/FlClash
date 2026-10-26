@@ -36,16 +36,12 @@ func prepareEgress(cfg *config.Config) *config.Config {
 	return &applied
 }
 
-func finishEgress(cfg *config.Config) {
+func finishEgress() {
 	if egressInterface == "" {
 		return
 	}
-	configured := ""
-	if cfg != nil && cfg.General != nil {
-		configured = cfg.General.Interface
-	}
-	// A value updateConfig wrote meanwhile is left alone.
-	dialer.DefaultInterface.CompareAndSwap(egressInterface, configured)
+	// A value a later apply wrote meanwhile is left alone.
+	dialer.DefaultInterface.CompareAndSwap(egressInterface, "")
 	egressInterface = ""
 	log.Infoln("[TUN] bootstrap egress released, auto-detect finder up: %t", dialer.DefaultInterfaceFinder.Load() != nil)
 }
